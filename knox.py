@@ -1,4 +1,4 @@
-import requests, json, jwt, uuid, time
+import requests, json, jwt, uuid
 
 # fetch client id from client id file
 def client_id_from_json_file(filename):
@@ -23,22 +23,20 @@ def private_pem_from_certificate_json(certificate_json):
 
 
 # Return signed client id jwt token
-def signed_clientid_jwt(client_id, public_key, expiration_minutes):
+def signed_clientid_jwt(client_id, public_key):
 
     payload={"clientIdentifier" : client_id,
             "publicKey" : public_key,
             "aud": "KnoxWSM",
-            "iat" : int(time.time()),
-            "exp": int(time.time()) + expiration_minutes * 60,
             "jti" : str(uuid.uuid1()) + str(uuid.uuid1())}
 
     return jwt.encode(payload=payload, key=private_pem, algorithm="RS512")
 
 
 # Return access token by calling knox API
-def access_token_request(client_id, public_key, minutes):
+def access_token_request(client_id, public_key):
 
-    client_identifier_jwt = signed_clientid_jwt(client_id, public_key, minutes)
+    client_identifier_jwt = signed_clientid_jwt(client_id, public_key)
 
     json_data = {'clientIdentifierJwt' : client_identifier_jwt, 'base64EncodedStringPublicKey' : public_key}
 
@@ -90,7 +88,6 @@ def device_info(access_token, public_key, page_number, page_size, imei):
 
 client_id_filename = 'clientid.json' # File json content -> {"clientid" : "YOUR CLIENT ID"}
 certificate_filename = 'certificate.json' # File generated from Knox portal
-access_token_expiration_minutes = 30
 
 client_id = client_id_from_json_file(client_id_filename)
 certificate_json = certificate_file_to_json(certificate_filename)
@@ -99,7 +96,7 @@ private_pem = private_pem_from_certificate_json(certificate_json)
 public_key = public_key_from_certificate_json(certificate_json)
 
 
-access_token = access_token_request(client_id, public_key, access_token_expiration_minutes)
+access_token = access_token_request(client_id, public_key)
 
 page_number = 0
 page_size = 100
