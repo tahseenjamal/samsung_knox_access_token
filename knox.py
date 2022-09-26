@@ -88,7 +88,7 @@ def device_info(access_token, public_key, page_number, page_size, imei):
 
 
 
-client_id_filename = 'clientid.json' # File json content -> {"clientid" : "YOU CLIENT ID"}
+client_id_filename = 'clientid.json' # File json content -> {"clientid" : "YOUR CLIENT ID"}
 certificate_filename = 'certificate.json' # File generated from Knox portal
 access_token_expiration_minutes = 30
 
